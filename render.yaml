@@ -1,0 +1,20 @@
+# Render Blueprint — optional. You can also create the service by hand in the dashboard
+# (New + -> Web Service -> connect this repo), which is what the HW4 tutorial video shows.
+#
+# The API key is deliberately NOT in this file. `sync: false` means Render asks for the value
+# when the blueprint is applied and stores it as a secret environment variable.
+services:
+  - type: web
+    name: ask-qi-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://cathhh204.github.io
