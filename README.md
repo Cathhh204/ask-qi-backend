@@ -149,7 +149,7 @@ It prints something like `Running on http://127.0.0.1:5000`.
 | Name | Required | Default | What it's for |
 |---|---|---|---|
 | `GEMINI_API_KEY` | **yes** | — | Google AI Studio key. Free at https://aistudio.google.com/apikey |
-| `GEMINI_MODEL` | no | `gemini-2.5-flash` | Which Gemini model to call |
+| `GEMINI_MODEL` | no | `gemini-flash-latest` | Which Gemini model to call (an alias, so it keeps working as Google retires specific dated model names) |
 | `ALLOWED_ORIGINS` | no | GitHub Pages + localhost | Comma-separated list of sites allowed to call this service |
 | `PORT` | no | `5000` | Local port (Render sets this itself in production) |
 

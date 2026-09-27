@@ -48,7 +48,7 @@ except ImportError:  # python-dotenv isn't installed; environment variables stil
 # environment, never from this file (see .env.example / README).
 # ---------------------------------------------------------------------------
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest").strip()
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     f"{GEMINI_MODEL}:generateContent"
@@ -242,11 +242,14 @@ def chat():
             "maxOutputTokens": MAX_OUTPUT_TOKENS,
         },
     }
-    if GEMINI_MODEL.startswith("gemini-2.5"):
-        # 2.5 models "think" before answering by default, and those hidden thinking tokens count
-        # against maxOutputTokens — which can eat the whole budget and return an empty reply.
-        # This chatbot answers short factual questions, so thinking is turned off.
-        payload["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 0}
+    # Current Gemini models "think" before answering by default, and those hidden thinking
+    # tokens count against maxOutputTokens — a two-word answer can spend 50+ tokens on invisible
+    # reasoning, which can eat the whole budget and return an empty reply. Earlier this only
+    # checked for a "gemini-2.5" prefix, which silently stopped applying the moment the model
+    # name moved on (confirmed live: gemini-2.5-flash is now retired in favor of gemini-3.8-flash).
+    # This chatbot only needs short factual answers, so thinking is always turned off, regardless
+    # of which model name/alias is configured.
+    payload["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 0}
 
     try:
         upstream = requests.post(
